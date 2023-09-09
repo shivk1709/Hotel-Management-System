@@ -1,12 +1,17 @@
 package com.service.user.serviceImpls;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.service.user.Daos.UserDao;
+import com.service.user.dtos.RatingsDto;
 import com.service.user.dtos.UserDto;
 import com.service.user.exceptions.ResourceNotFoundException;
 import com.service.user.models.User;
@@ -22,6 +27,11 @@ public class UserServiceImpl implements UserServiceInterface {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	/**
 	 * @param userDto
@@ -43,7 +53,12 @@ public class UserServiceImpl implements UserServiceInterface {
 		// TODO Auto-generated method stub
 		User findUserById = this.userDao.findById(id).
 				orElseThrow(()-> new ResourceNotFoundException("User not found for the id", Long.valueOf(id)));
-		return userToUserDto(findUserById);
+//		http://localhost:8083/ratings-by-userId/3
+		ArrayList<RatingsDto> ratings = restTemplate.getForObject("http://localhost:8083/ratings-by-userId/3", ArrayList.class);
+		logger.info("{}", ratings);
+		UserDto userDto = userToUserDto(findUserById);
+		userDto.setRatings(ratings);
+		return userDto;
 	}
 	
 	/**
