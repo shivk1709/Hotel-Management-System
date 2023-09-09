@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.java.hotels.dtos.HotelDto;
 import com.java.hotels.services.HotelService;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class HotelController {
 	
@@ -24,7 +26,7 @@ public class HotelController {
 	private HotelService hotelService;
 	
 	@PostMapping("/add-hotel")
-	public ResponseEntity<HotelDto> addhotel(@RequestBody HotelDto hotelDto){
+	public ResponseEntity<HotelDto> addhotel(@Valid @RequestBody HotelDto hotelDto){
 		return new ResponseEntity<HotelDto>(hotelService.addHotel(hotelDto), HttpStatus.OK);
 	}
 	@GetMapping("get-hotel-by-id/{id}")
@@ -36,7 +38,7 @@ public class HotelController {
 		return new ResponseEntity<List<HotelDto>>(this.hotelService.getAllHotelDetails(), HttpStatus.FOUND);
 	}
 	@PutMapping("update-hotel-by-id/{id}")
-	public ResponseEntity<HotelDto> updateHotelById(@RequestBody HotelDto hotelDto,@PathVariable long id){
+	public ResponseEntity<HotelDto> updateHotelById(@Valid @RequestBody HotelDto hotelDto,@PathVariable long id){
 		return new ResponseEntity<HotelDto>(this.hotelService.updateHotelDetailsById(hotelDto, id), HttpStatus.OK);
 	}
 	@DeleteMapping("delete-hotel-by-id/{id}")
