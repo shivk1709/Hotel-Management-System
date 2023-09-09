@@ -1,5 +1,8 @@
 package com.service.user.dtos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -31,5 +34,7 @@ public class UserDto {
 	private String password;
 	@NotNull
 	private String address;
+	
+	private ArrayList<RatingsDto> ratings;
 
 }
