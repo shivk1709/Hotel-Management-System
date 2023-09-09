@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.service.ratings.Dtos.RatingsDto;
 import com.service.ratings.services.RatingsService;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class RatingsController {
 
@@ -20,7 +22,7 @@ public class RatingsController {
 	private RatingsService ratingsService;
 
 	@PostMapping("/add-rating")
-	public ResponseEntity<RatingsDto> addRatings(@RequestBody RatingsDto ratingsDto) {
+	public ResponseEntity<RatingsDto> addRatings(@Valid @RequestBody RatingsDto ratingsDto) {
 		return new ResponseEntity<RatingsDto>(this.ratingsService.addRatings(ratingsDto), HttpStatus.OK);
 	}
 
