@@ -24,7 +24,7 @@ public class UserDto {
 	
 	private Long id;
 	@NotNull
-	@Size(min = 4, max = 12)
+	@Size(min = 4, message = "Username too short")
 	private String name;
 	@NotNull
 	@Email(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "Email should be Valid")

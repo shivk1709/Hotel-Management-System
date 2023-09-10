@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserServiceInterface {
 		User findUserById = this.userDao.findById(id).
 				orElseThrow(()-> new ResourceNotFoundException("User not found for the id", Long.valueOf(id)));
 //		http://localhost:8083/ratings-by-userId/3
-		ArrayList<RatingsDto> ratings = restTemplate.getForObject("http://localhost:8083/ratings-by-userId/3", ArrayList.class);
+		ArrayList<RatingsDto> ratings = restTemplate.getForObject("http://localhost:8083/ratings-by-userId/"+findUserById.getId(), ArrayList.class);
 		logger.info("{}", ratings);
 		UserDto userDto = userToUserDto(findUserById);
 		userDto.setRatings(ratings);
