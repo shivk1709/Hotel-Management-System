@@ -1,16 +1,19 @@
 package com.service.user.serviceImpls;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.service.user.Daos.UserDao;
+import com.service.user.dtos.HotelDto;
 import com.service.user.dtos.RatingsDto;
 import com.service.user.dtos.UserDto;
 import com.service.user.exceptions.ResourceNotFoundException;
@@ -54,10 +57,19 @@ public class UserServiceImpl implements UserServiceInterface {
 		User findUserById = this.userDao.findById(id).
 				orElseThrow(()-> new ResourceNotFoundException("User not found for the id", Long.valueOf(id)));
 //		http://localhost:8083/ratings-by-userId/3
-		ArrayList<RatingsDto> ratings = restTemplate.getForObject("http://localhost:8083/ratings-by-userId/"+findUserById.getId(), ArrayList.class);
+		RatingsDto[] ratings = restTemplate.getForObject("http://RATING-SERVICE/ratings-by-userId/"+findUserById.getId(), RatingsDto[].class);
 		logger.info("{}", ratings);
+		List<RatingsDto> ratingsByUser = Arrays.stream(ratings).toList();
+		List<RatingsDto> ratingList = ratingsByUser.stream().map(rating -> {
+			ResponseEntity<HotelDto> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/get-hotel-by-id/"+rating.getHotelId(), HotelDto.class);
+			HotelDto hotelDto = forEntity.getBody();
+			logger.info("Status code{}", forEntity.getStatusCode());
+			rating.setHotel(hotelDto);
+			return rating;
+		}).collect(Collectors.toList());
 		UserDto userDto = userToUserDto(findUserById);
-		userDto.setRatings(ratings);
+		userDto.setRatings(ratingList);
+//		userDto.setRatings(ratings);
 		return userDto;
 	}
 	

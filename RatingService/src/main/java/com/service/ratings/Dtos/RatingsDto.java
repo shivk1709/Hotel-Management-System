@@ -27,5 +27,5 @@ public class RatingsDto {
 	@Min(value = 0, message = "**Please use positive integers")
 	@Max(value = 10, message = "**Please rate out of 10")
 	private int rating;
-
+	
 }
