@@ -18,6 +18,7 @@ import com.service.user.dtos.RatingsDto;
 import com.service.user.dtos.UserDto;
 import com.service.user.exceptions.ResourceNotFoundException;
 import com.service.user.models.User;
+import com.service.user.services.HotelService;
 import com.service.user.services.UserServiceInterface;
 
 /**
@@ -33,6 +34,9 @@ public class UserServiceImpl implements UserServiceInterface {
 	
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private HotelService hotelService;
 	
 	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -64,6 +68,29 @@ public class UserServiceImpl implements UserServiceInterface {
 			ResponseEntity<HotelDto> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/get-hotel-by-id/"+rating.getHotelId(), HotelDto.class);
 			HotelDto hotelDto = forEntity.getBody();
 			logger.info("Status code{}", forEntity.getStatusCode());
+			rating.setHotel(hotelDto);
+			return rating;
+		}).collect(Collectors.toList());
+		UserDto userDto = userToUserDto(findUserById);
+		userDto.setRatings(ratingList);
+//		userDto.setRatings(ratings);
+		return userDto;
+	}
+	
+	@Override
+	public UserDto getUserByIdUsingFeignClient(long id) {
+		// TODO Auto-generated method stub
+		User findUserById = this.userDao.findById(id).
+				orElseThrow(()-> new ResourceNotFoundException("User not found for the id", Long.valueOf(id)));
+//		http://localhost:8083/ratings-by-userId/3
+		RatingsDto[] ratings = restTemplate.getForObject("http://RATING-SERVICE/ratings-by-userId/"+findUserById.getId(), RatingsDto[].class);
+		List<RatingsDto> ratingsByUser = Arrays.stream(ratings).toList();
+		List<RatingsDto> ratingList = ratingsByUser.stream().map(rating -> {
+			logger.info("{}", rating);
+			HotelDto hotelDto = hotelService.getHotelById(rating.getHotelId());
+//			ResponseEntity<HotelDto> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/get-hotel-by-id/"+rating.getHotelId(), HotelDto.class);
+//			HotelDto hotelDto = forEntity.getBody();
+//			logger.info("Status code{}", forEntity.getStatusCode());
 			rating.setHotel(hotelDto);
 			return rating;
 		}).collect(Collectors.toList());

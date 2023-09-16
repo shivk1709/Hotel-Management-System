@@ -16,5 +16,6 @@ public interface UserServiceInterface {
 	List<UserDto> getAllUser();
 	UserDto updateUser(long id, UserDto userDto);
 	void deleteUserById(long id);
+	UserDto getUserByIdUsingFeignClient(long id);
 
 }
