@@ -46,7 +46,12 @@ public class UserController {
 	 */
 	@GetMapping("/find-user-By-Id/{id}")
 	public ResponseEntity<UserDto> getUserById(@PathVariable long id){
-		return new ResponseEntity<UserDto>(userServiceInterface.getUserById(id), HttpStatus.FOUND);
+		return new ResponseEntity<UserDto>(userServiceInterface.getUserById(id), HttpStatus.OK);
+	}
+	
+	@GetMapping("/getUser-by-id-feign/{id}")
+	public ResponseEntity<UserDto> getUserByIdUsingFeignClient(@PathVariable long id){
+		return new ResponseEntity<UserDto>(userServiceInterface.getUserByIdUsingFeignClient(id), HttpStatus.OK);
 	}
 	/**
 	 * 
@@ -54,7 +59,7 @@ public class UserController {
 	 */
 	@GetMapping("find-all-users")
 	public ResponseEntity<List<UserDto>> allusersDetails(){
-		return new ResponseEntity<List<UserDto>>(userServiceInterface.getAllUser(), HttpStatus.FOUND);
+		return new ResponseEntity<List<UserDto>>(userServiceInterface.getAllUser(), HttpStatus.OK);
 	}
 	
 	/**

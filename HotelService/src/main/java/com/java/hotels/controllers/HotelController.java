@@ -31,11 +31,11 @@ public class HotelController {
 	}
 	@GetMapping("get-hotel-by-id/{id}")
 	public ResponseEntity<HotelDto> findHotelById(@PathVariable long id){
-		return new ResponseEntity<HotelDto>(this.hotelService.getHotelById(id), HttpStatus.FOUND);
+		return new ResponseEntity<HotelDto>(this.hotelService.getHotelById(id), HttpStatus.OK);
 	}
 	@GetMapping("all-hotels")
 	public ResponseEntity<List<HotelDto>> allHotelDetails(){
-		return new ResponseEntity<List<HotelDto>>(this.hotelService.getAllHotelDetails(), HttpStatus.FOUND);
+		return new ResponseEntity<List<HotelDto>>(this.hotelService.getAllHotelDetails(), HttpStatus.OK);
 	}
 	@PutMapping("update-hotel-by-id/{id}")
 	public ResponseEntity<HotelDto> updateHotelById(@Valid @RequestBody HotelDto hotelDto,@PathVariable long id){
