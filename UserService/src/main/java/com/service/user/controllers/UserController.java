@@ -2,6 +2,8 @@ package com.service.user.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.service.user.dtos.UserDto;
 import com.service.user.services.UserServiceInterface;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.validation.Valid;
-import lombok.val;
 
 /**
  * @author shivk
@@ -28,6 +31,8 @@ public class UserController {
 
 	@Autowired
 	private UserServiceInterface userServiceInterface;
+	
+	Logger logger = LoggerFactory.getLogger(UserController.class);
 	
 	/**
 	 * 
@@ -49,10 +54,32 @@ public class UserController {
 		return new ResponseEntity<UserDto>(userServiceInterface.getUserById(id), HttpStatus.OK);
 	}
 	
+	int count=1;
 	@GetMapping("/getUser-by-id-feign/{id}")
+//	@CircuitBreaker(name = "ratingHotelServicesBreaker", fallbackMethod = "ratingHotelServicesFallback")
+	@Retry(name = "ratingHotelServicesBreaker", fallbackMethod = "ratingHotelServicesFallback")
 	public ResponseEntity<UserDto> getUserByIdUsingFeignClient(@PathVariable long id){
+		logger.info("Retry Count {}", count);
+		count++;
 		return new ResponseEntity<UserDto>(userServiceInterface.getUserByIdUsingFeignClient(id), HttpStatus.OK);
+}
+	
+	/**
+	 * Fallback method of getUserByIdUsingFeignClient
+	 */
+	public ResponseEntity<UserDto>ratingHotelServicesFallback(long id, Exception ex){
+		logger.info("Fallback is executing because of the error: ", ex.getMessage());
+		UserDto user = UserDto.builder()
+				.name("Dummy Name")
+				.password("1234")
+				.email("dummy@gmail.com")
+				.address("Dummy Address")
+				.build();
+		return new ResponseEntity<UserDto>(user, HttpStatus.OK);
+		
 	}
+	
+	
 	/**
 	 * 
 	 * @return list of all the user with all the fields
