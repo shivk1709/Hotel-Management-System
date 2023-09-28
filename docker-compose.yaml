@@ -1,0 +1,87 @@
+version: "3.7"
+
+services:
+
+  hotel-service:
+    image: shivksh/hotel-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8082:8082"
+    networks:
+      - main-network
+    depends_on:
+      - naming-server
+      - mysql
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.DATASOURCE.URL: jdbc:mysql://mysql:3306/hms?createDatabaseIfNotExist=true
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: root
+      
+  user-service:
+    image: shivksh/user-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8087:8087"
+    networks:
+      - main-network
+    depends_on:
+      - naming-server
+      - mysql
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.DATASOURCE.URL: jdbc:mysql://mysql:3306/hms?createDatabaseIfNotExist=true
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: root
+      
+  rating-service:
+    image: shivksh/rating-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8083:8083"
+    networks:
+      - main-network
+    depends_on:
+      - naming-server
+      - mysql
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.DATASOURCE.URL: jdbc:mysql://mysql:3306/hms?createDatabaseIfNotExist=true
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: root
+      
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - springapimysql-net
+    environment:
+      MYSQL_DATABASE: hms
+      MYSQL_ROOT_PASSWORD: root
+      
+  api-gateway-service:
+    image: shivksh/api-gateway:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8084:8084"
+    networks:
+      - main-network
+    depends_on:
+      - naming-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      
+  naming-server:
+    image: shivksh/service-registry:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - main-network
+       
+networks:
+  main-network:

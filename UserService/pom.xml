@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.service.user</groupId>
-	<artifactId>UserService</artifactId>
+	<artifactId>user-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>UserService</name>
+	<name>user-service</name>
 	<description>This is User Service</description>
 	<properties>
 		<java.version>17</java.version>
@@ -55,7 +55,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
-<!--
+		<!--
 		https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -140,6 +140,10 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<image>
+						<name>shivksh/${project.artifactId}:${project.version}</name>
+					</image>
+					<pullpolicy>IF_NOT_PRESENT</pullpolicy>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
