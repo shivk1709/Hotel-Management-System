@@ -58,7 +58,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - springapimysql-net
+      - main-network
     environment:
       MYSQL_DATABASE: hms
       MYSQL_ROOT_PASSWORD: root
